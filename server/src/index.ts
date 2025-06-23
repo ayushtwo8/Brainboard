@@ -4,15 +4,19 @@ import cors from 'cors';
 import mongoose from 'mongoose';
 
 import userRouter from './routes/userRoute';
+import contentRouter from './routes/contentRoute';
 
 dotenv.config();
 
 const app = express();
 
+// middlewares
 app.use(express.json());
 app.use(cors());
 
+// routes
 app.use('/api/v1/user', userRouter);
+app.use('/api/v1/content', contentRouter);
 
 const main = async () => {
     await mongoose.connect(process.env.MONGO_URI as string);
