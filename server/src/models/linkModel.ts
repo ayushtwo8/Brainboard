@@ -6,7 +6,7 @@ const linkSchema = new mongoose.Schema({
     required: true,
   },
   userId: {
-    types: mongoose.Types.ObjectId,
+    type: mongoose.Types.ObjectId,
     ref: "User",
     required: true,
   },

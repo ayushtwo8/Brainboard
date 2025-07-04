@@ -5,25 +5,25 @@ import { ContentModel } from "../models/contentModel";
 
 export const addContent = async (req: Request, res: Response) => {
     try{
-        const { link, type, description, title } = req.body;
+        const { link, type, title, tags } = req.body;
 
-        if(!link || !type || !title){
+        if (!link || !type || !title) {
             res.status(400).json({
-                message: "All field required"
-            })
+                message: "Title, link, and type are required fields."
+            });
             return;
         }
-        const content = await ContentModel.create({
+        const newContent  = await ContentModel.create({
             title,
             link, 
             type,
-            description,
-            userId: req.userId,
-            tags: []
+            tags: tags || [],
+            userId: req.userId
         });
 
         res.status(201).json({
-            message: "Content added"
+            message: "Content added successfully",
+            content: newContent
         });
     }catch(error){
         console.error("addContent controller error: ", addContent);
@@ -45,7 +45,7 @@ export const getUserContent = async (req: Request, res: Response) => {
             filter.title = { $regex: searchQuery, $options: "i"}; // case insensitive search
         }
 
-        const content = await ContentModel.find(filter).populate("userId", "email");
+        const content = await ContentModel.find(filter).populate("userId", "email").sort({createdAt: -1});
 
         res.status(200).json({
             content
@@ -61,15 +61,20 @@ export const getUserContent = async (req: Request, res: Response) => {
 
 export const deleteContent = async (req: Request, res: Response) => {
     try{
-        const contentId = req.body.id;
+        const { id: contentId } = req.params;
         const userId = req.userId;
 
-        await ContentModel.deleteOne({
+        const result = await ContentModel.deleteOne({
             _id: contentId,
-            userId
+            userId: userId // ✅ CRUCIAL security check remains
         });
         
-        res.status(200).json({ message: "Content deleted"})
+        if (result.deletedCount === 0) {
+            res.status(404).json({ message: "Content not found or you don't have permission to delete it." });
+            return;
+        }
+
+        res.status(204).json({ message: "Content deleted"})
     } catch(error){
         console.error("deleteContent controller error: ", error);
         res.status(500).json({

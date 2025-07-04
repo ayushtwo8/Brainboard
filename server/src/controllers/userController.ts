@@ -6,6 +6,7 @@ import { userSchema } from "../schemas/userSchema";
 import { UserModel } from "../models/userModel";
 
 export const signup = async (req: Request, res:Response) => {
+    console.log("signup controller");
     const result = userSchema.safeParse(req.body);
     if(!result.success){
         res.status(400).json({
@@ -43,6 +44,7 @@ export const signup = async (req: Request, res:Response) => {
 }
 
 export const login = async (req: Request, res: Response) => {
+    console.log("login controller");
     const result = userSchema.safeParse(req.body);
     if(!result.success){
         res.status(400).json({
@@ -68,14 +70,41 @@ export const login = async (req: Request, res: Response) => {
             return;
         }
 
-        const token = jwt.sign({email: result.data.email}, process.env.JWT_SECRET as string, { expiresIn: "1h"});
+        const token = jwt.sign({id: user._id}, process.env.JWT_SECRET!, { expiresIn: "1h"});
 
         res.status(200).json({
-            token: token
+            token,
+            user: {
+                name: user.name,
+                email: user.email
+            }
         })
 
     } catch(error){
         console.error("Login controller error: ",error);
+        res.status(500).json({
+            message: "Internal Server Error"
+        })
+    }
+}
+
+export const getProfile = async (req: Request, res: Response) => {
+    console.log("getProfile controller");
+    try{
+        const user = await UserModel.findById(req.userId);
+
+        if (!user) {
+            res.status(404).json({ message: "User not found" });
+            return;
+        }
+        
+        res.json({
+            name: user.name,
+            email: user.email
+        });
+
+    } catch(error){
+        console.error("Profile controller error: ",error);
         res.status(500).json({
             message: "Internal Server Error"
         })

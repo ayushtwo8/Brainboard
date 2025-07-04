@@ -12,6 +12,6 @@ contentRouter.post('/', authenticate, addContent);
 contentRouter.get('/', authenticate, getUserContent);
 
 // delete some content
-contentRouter.delete('/', authenticate, deleteContent);
+contentRouter.delete('/:id', authenticate, deleteContent);
 
 export default contentRouter;
