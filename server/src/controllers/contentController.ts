@@ -5,7 +5,7 @@ import { ContentModel } from "../models/contentModel";
 
 export const addContent = async (req: Request, res: Response) => {
     try{
-        const { link, type, title, tags } = req.body;
+        const { link, type, title, description, tags } = req.body;
 
         if (!link || !type || !title) {
             res.status(400).json({
@@ -17,6 +17,7 @@ export const addContent = async (req: Request, res: Response) => {
             title,
             link, 
             type,
+            description,
             tags: tags || [],
             userId: req.userId
         });
