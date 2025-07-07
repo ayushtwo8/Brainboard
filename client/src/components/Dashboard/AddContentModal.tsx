@@ -1,7 +1,6 @@
-
-import { useState } from "react"
-import { useMutation, useQueryClient } from "@tanstack/react-query"
-import { Button } from "@/components/ui/button"
+import { useState } from "react";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { Button } from "@/components/ui/button";
 import {
   Dialog,
   DialogContent,
@@ -9,42 +8,46 @@ import {
   DialogFooter,
   DialogHeader,
   DialogTitle,
-} from "@/components/ui/dialog"
-import { Input } from "@/components/ui/input"
-import { Label } from "@/components/ui/label"
+} from "@/components/ui/dialog";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from "@/components/ui/select"
-import axios from "axios"
+} from "@/components/ui/select";
+import axios from "axios";
 
 interface AddContentModalProps {
-  isOpen: boolean
-  onClose: () => void
+  isOpen: boolean;
+  onClose: () => void;
 }
 
 interface ContentData {
-  title: string
-  link: string
-  type: string
-  description?: string
-  tags?: string[]
+  title: string;
+  link: string;
+  type: string;
+  description?: string;
+  tags?: string[];
 }
 
 const AddContentModal = ({ isOpen, onClose }: AddContentModalProps) => {
-  const [title, setTitle] = useState("")
-  const [link, setLink] = useState("")
-  const [type, setType] = useState("url")
-  const [description, setDescription] = useState("")
-  const queryClient = useQueryClient()
+  const [title, setTitle] = useState("");
+  const [link, setLink] = useState("");
+  const [type, setType] = useState("url");
+  const [description, setDescription] = useState("");
+  const queryClient = useQueryClient();
 
-  const { mutate: addContent, isPending, error } = useMutation({
+  const {
+    mutate: addContent,
+    isPending,
+    error,
+  } = useMutation({
     mutationFn: async (contentData: ContentData) => {
-      const token = localStorage.getItem("token")
-      if (!token) throw new Error("No auth token found")
+      const token = localStorage.getItem("token");
+      if (!token) throw new Error("No auth token found");
 
       const response = await axios.post(
         "http://localhost:5000/api/v1/content",
@@ -54,44 +57,47 @@ const AddContentModal = ({ isOpen, onClose }: AddContentModalProps) => {
             Authorization: `Bearer ${token}`,
           },
         }
-      )
-      return response.data
+      );
+      return response.data;
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["contents"] })
-      setTitle("")
-      setLink("")
-      setType("url")
-      setDescription("")
-      onClose()
+      queryClient.invalidateQueries({ queryKey: ["contents"] });
+      setTitle("");
+      setLink("");
+      setType("url");
+      setDescription("");
+      onClose();
     },
-  })
+  });
 
   const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault()
-    addContent({ title, link, type, description })
-  }
+    e.preventDefault();
+    addContent({ title, link, type, description });
+  };
 
   const handleLinkChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const url = e.target.value
-    setLink(url)
+    const url = e.target.value;
+    setLink(url);
 
     if (url.includes("youtube.com") || url.includes("youtu.be")) {
-      setType("youtube")
+      setType("youtube");
     } else if (url.includes("twitter.com") || url.includes("x.com")) {
-      setType("twitter")
+      setType("twitter");
     } else {
-      setType("url")
+      setType("url");
     }
-  }
+  };
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
       <DialogContent className="sm:max-w-[425px] w-[85vw] rounded-xl font-inter">
         <DialogHeader>
-          <DialogTitle className="font-satoshi text-xl">Add New Content</DialogTitle>
+          <DialogTitle className="font-satoshi text-xl">
+            Add New Content
+          </DialogTitle>
           <DialogDescription>
-            Add a link to your second brain. We'll automatically detect the content type.
+            Add a link to your second brain. We'll automatically detect the
+            content type.
           </DialogDescription>
         </DialogHeader>
 
@@ -155,14 +161,18 @@ const AddContentModal = ({ isOpen, onClose }: AddContentModalProps) => {
             <Button type="button" variant="outline" onClick={onClose}>
               Cancel
             </Button>
-            <Button type="submit" disabled={isPending} className="ml-3 bg-[#3b73ed] hover:bg-[#2a5cc9]">
+            <Button
+              type="submit"
+              disabled={isPending}
+              className="ml-3 bg-[#3b73ed] hover:bg-[#2a5cc9]"
+            >
               {isPending ? "Adding..." : "Add Content"}
             </Button>
           </DialogFooter>
         </form>
       </DialogContent>
     </Dialog>
-  )
-}
+  );
+};
 
-export default AddContentModal
+export default AddContentModal;

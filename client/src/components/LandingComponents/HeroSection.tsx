@@ -31,8 +31,8 @@ const HeroSection: React.FC = () => {
 
         {/* Description */}
         <p className="text-black max-w-2xl mx-auto mt-10 pt-6 mb-16 text-sm sm:text-base md:text-lg font-inter">
-          BrainBoard is your personal knowledge canvas, designed to turn digital clutter
-            into an interconnected library of your best thinking.
+          BrainBoard is your personal knowledge canvas, designed to turn digital
+          clutter into an interconnected library of your best thinking.
         </p>
 
         {/* Buttons */}
@@ -50,7 +50,7 @@ const HeroSection: React.FC = () => {
       </div>
 
       {/* Feature Tags */}
-      
+
       {signupOpen && (
         <SignupModal
           onClose={() => setSignupOpen(false)}

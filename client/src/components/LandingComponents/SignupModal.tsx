@@ -13,7 +13,10 @@ interface SignupModalProps {
   onSwitchToSignin: () => void;
 }
 
-export default function SignupModal({ onClose, onSwitchToSignin }: SignupModalProps) {
+export default function SignupModal({
+  onClose,
+  onSwitchToSignin,
+}: SignupModalProps) {
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -46,7 +49,6 @@ export default function SignupModal({ onClose, onSwitchToSignin }: SignupModalPr
   return (
     <div className="fixed inset-0 bg-black/70 backdrop-blur-md flex justify-center items-center z-50 p-4">
       <div className="w-full max-w-md mx-4 rounded-2xl border border-white/20 bg-white/20 p-6 text-white relative shadow-2xl">
-
         {/* Close Button */}
         <button
           onClick={onClose}
@@ -58,16 +60,21 @@ export default function SignupModal({ onClose, onSwitchToSignin }: SignupModalPr
 
         {/* Header */}
         <div className="mb-6 text-center">
-          <h2 className="text-3xl font-bold font-satoshi">Create Your BrainBoard</h2>
+          <h2 className="text-3xl font-bold font-satoshi">
+            Create Your BrainBoard
+          </h2>
           <p className="text-white/70 text-sm mt-1 font-inter">
-            Sign up to save links, organize knowledge, and grow your second brain.
+            Sign up to save links, organize knowledge, and grow your second
+            brain.
           </p>
         </div>
 
         {/* Form */}
         <form onSubmit={handleSubmit} className="space-y-4">
           <div>
-            <Label htmlFor="name" className="text-sm text-white font-inter">Name</Label>
+            <Label htmlFor="name" className="text-sm text-white font-inter">
+              Name
+            </Label>
             <Input
               id="name"
               type="text"
@@ -80,7 +87,9 @@ export default function SignupModal({ onClose, onSwitchToSignin }: SignupModalPr
           </div>
 
           <div>
-            <Label htmlFor="email" className="text-sm text-white font-inter">Email</Label>
+            <Label htmlFor="email" className="text-sm text-white font-inter">
+              Email
+            </Label>
             <Input
               id="email"
               type="email"
@@ -93,7 +102,9 @@ export default function SignupModal({ onClose, onSwitchToSignin }: SignupModalPr
           </div>
 
           <div>
-            <Label htmlFor="password" className="text-sm text-white font-inter">Password</Label>
+            <Label htmlFor="password" className="text-sm text-white font-inter">
+              Password
+            </Label>
             <Input
               id="password"
               type="password"
@@ -112,7 +123,9 @@ export default function SignupModal({ onClose, onSwitchToSignin }: SignupModalPr
             className="w-full bg-white text-purple-600 hover:bg-white/90 font-satoshi py-3 rounded-full"
             disabled={signupMutation.isPending}
           >
-            {signupMutation.isPending ? "Creating Account..." : "Create Account"}
+            {signupMutation.isPending
+              ? "Creating Account..."
+              : "Create Account"}
           </Button>
         </form>
 

@@ -1,112 +1,118 @@
-
-import { useState ,useEffect  } from "react"
-import { useNavigate } from "react-router-dom"
-import { useQuery, useQueryClient } from "@tanstack/react-query"
-import { Plus, Share, Loader2, Search } from "lucide-react"
-import Sidebar from "./Sidebar"
-import ContentCard from "./ContentCard"
-import AddContentModal from "./AddContentModal"
-import ShareBrainModal from "./ShareBrainModal"
-import { Button } from "@/components/ui/button"
-import axios from "axios"
-import toast from "react-hot-toast"
-
+import { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
+import { Plus, Share, Loader2, Search } from "lucide-react";
+import Sidebar from "./Sidebar";
+import ContentCard from "./ContentCard";
+import AddContentModal from "./AddContentModal";
+import ShareBrainModal from "./ShareBrainModal";
+import { Button } from "@/components/ui/button";
+import axios from "axios";
+import toast from "react-hot-toast";
 
 interface Content {
-  _id: string
-  title: string
-  link: string
-  type: string
-  description: string
-  userId: string
-  tags: string[]
+  _id: string;
+  title: string;
+  link: string;
+  type: string;
+  description: string;
+  userId: string;
+  tags: string[];
 }
 
-
-
-const fetchContents = async (activeTab: string, searchQuery: string): Promise<Content[]> => {
-  const params: Record<string, string> = {}
-  const token = localStorage.getItem("token")
-  if (!token) throw new Error("No auth token found")
+const fetchContents = async (
+  activeTab: string,
+  searchQuery: string
+): Promise<Content[]> => {
+  const params: Record<string, string> = {};
+  const token = localStorage.getItem("token");
+  if (!token) throw new Error("No auth token found");
 
   if (activeTab !== "all" && activeTab !== "search") {
-    params.type = activeTab
+    params.type = activeTab;
   }
 
   if (activeTab === "search" && searchQuery) {
-    params.search = searchQuery
+    params.search = searchQuery;
   }
 
   try {
     const response = await axios.get("http://localhost:5000/api/v1/content", {
       params,
       headers: {
-        'Authorization': `Bearer ${token}`,
-        'Cache-Control': 'no-cache',
-        'Pragma': 'no-cache',
+        Authorization: `Bearer ${token}`,
+        "Cache-Control": "no-cache",
+        Pragma: "no-cache",
       },
-    })
-    return response.data.content
+    });
+    return response.data.content;
   } catch (error: any) {
-    throw new Error(error.response?.data?.message || "Failed to fetch content")
+    throw new Error(error.response?.data?.message || "Failed to fetch content");
   }
-}
+};
 
 const Dashboard = () => {
-  const [activeTab, setActiveTab] = useState("all")
-  const [isAddModalOpen, setIsAddModalOpen] = useState(false)
-  const [isShareModalOpen, setIsShareModalOpen] = useState(false)
-  const [searchQuery, setSearchQuery] = useState("")
+  const [activeTab, setActiveTab] = useState("all");
+  const [isAddModalOpen, setIsAddModalOpen] = useState(false);
+  const [isShareModalOpen, setIsShareModalOpen] = useState(false);
+  const [searchQuery, setSearchQuery] = useState("");
 
-  const navigate=useNavigate();
+  const navigate = useNavigate();
   useEffect(() => {
-  const handleStorage = () => {
-    if (!localStorage.getItem("token")) {
-      navigate("/");
-       toast.success("Logged out successfully")
-    }
-  };
-  window.addEventListener("storage", handleStorage);
-  return () => window.removeEventListener("storage", handleStorage);
-}, [navigate]);
+    const handleStorage = () => {
+      if (!localStorage.getItem("token")) {
+        navigate("/");
+        toast.success("Logged out successfully");
+      }
+    };
+    window.addEventListener("storage", handleStorage);
+    return () => window.removeEventListener("storage", handleStorage);
+  }, [navigate]);
 
-  const queryClient = useQueryClient()
+  const queryClient = useQueryClient();
 
-  const { data: contents, isLoading, error } = useQuery({
-    queryKey: ['contents', activeTab, searchQuery],
+  const {
+    data: contents,
+    isLoading,
+    error,
+  } = useQuery({
+    queryKey: ["contents", activeTab, searchQuery],
     queryFn: () => fetchContents(activeTab, searchQuery),
-  })
+  });
 
   const deleteContent = async (id: string): Promise<void> => {
-    const token = localStorage.getItem("token")
-    if (!token) throw new Error("No auth token found")
+    const token = localStorage.getItem("token");
+    if (!token) throw new Error("No auth token found");
 
     await axios.delete(`http://localhost:5000/api/v1/content/${id}`, {
       headers: {
-        'Authorization': `Bearer ${token}`,
+        Authorization: `Bearer ${token}`,
       },
     }),
-    toast.success("Content deleted Successfully")
+      toast.success("Content deleted Successfully");
 
-    queryClient.invalidateQueries({ queryKey: ['contents'] })
-  }
+    queryClient.invalidateQueries({ queryKey: ["contents"] });
+  };
 
   const getFilteredContents = () => {
     if (activeTab === "search") {
-      return contents?.filter((content) =>
-        content.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        content.tags.some((tag) =>
-          tag.toLowerCase().includes(searchQuery.toLowerCase())
-        )
-      ) || []
+      return (
+        contents?.filter(
+          (content) =>
+            content.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
+            content.tags.some((tag) =>
+              tag.toLowerCase().includes(searchQuery.toLowerCase())
+            )
+        ) || []
+      );
     } else if (activeTab === "all") {
-      return contents || []
+      return contents || [];
     } else {
-      return contents?.filter((content) => content.type === activeTab) || []
+      return contents?.filter((content) => content.type === activeTab) || [];
     }
-  }
+  };
 
-  const filteredContents = getFilteredContents()
+  const filteredContents = getFilteredContents();
 
   return (
     <div className="min-h-screen bg-[#F6F7EE] font-inter">
@@ -176,7 +182,9 @@ const Dashboard = () => {
           ) : filteredContents.length === 0 ? (
             <div className="bg-white rounded-2xl shadow-md p-6 text-center">
               <h3 className="text-lg font-medium font-satoshi text-black mb-2">
-                {activeTab === "search" ? "No matching results found" : "No content found"}
+                {activeTab === "search"
+                  ? "No matching results found"
+                  : "No content found"}
               </h3>
               <p className="text-black/80 mb-4">
                 {activeTab === "search"
@@ -196,35 +204,38 @@ const Dashboard = () => {
               )}
             </div>
           ) : (
-           <div
-  key={activeTab} // 👈 ensures animation triggers on tab change
-  className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6"
-
- 
->
-  {filteredContents.map((content) => (
-    <div key={content._id} >
-      <ContentCard
-        id={content._id}
-        title={content.title}
-        link={content.link}
-        type={content.type}
-        description={content.description}
-        onDelete={deleteContent}
-      />
-    </div>
-  ))}
-</div>
-
+            <div
+              key={activeTab} // 👈 ensures animation triggers on tab change
+              className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6"
+            >
+              {filteredContents.map((content) => (
+                <div key={content._id}>
+                  <ContentCard
+                    id={content._id}
+                    title={content.title}
+                    link={content.link}
+                    type={content.type}
+                    description={content.description}
+                    onDelete={deleteContent}
+                  />
+                </div>
+              ))}
+            </div>
           )}
         </div>
       </div>
 
       {/* Modals */}
-      <AddContentModal isOpen={isAddModalOpen} onClose={() => setIsAddModalOpen(false)} />
-      <ShareBrainModal isOpen={isShareModalOpen} onClose={() => setIsShareModalOpen(false)} />
+      <AddContentModal
+        isOpen={isAddModalOpen}
+        onClose={() => setIsAddModalOpen(false)}
+      />
+      <ShareBrainModal
+        isOpen={isShareModalOpen}
+        onClose={() => setIsShareModalOpen(false)}
+      />
     </div>
-  )
-}
+  );
+};
 
-export default Dashboard
+export default Dashboard;

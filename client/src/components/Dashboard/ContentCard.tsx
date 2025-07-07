@@ -1,78 +1,94 @@
-import type React from "react"
-import { useState, useEffect, useRef } from "react"
-import { Trash2, Copy, ExternalLink } from "lucide-react"
-import { Button } from "@/components/ui/button"
-import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
-import ConfirmDeleteModal from "./ConfirmDeleteModal"
+import type React from "react";
+import { useState, useEffect, useRef } from "react";
+import { Trash2, Copy, ExternalLink } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import {
+  Card,
+  CardContent,
+  CardFooter,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import ConfirmDeleteModal from "./ConfirmDeleteModal";
 
 interface ContentCardProps {
-  id: string
-  title: string
-  link: string
-  type?: string
-  description: string
-  onDelete?: (id: string) => void
+  id: string;
+  title: string;
+  link: string;
+  type?: string;
+  description: string;
+  onDelete?: (id: string) => void;
 }
 
-const ContentCard: React.FC<ContentCardProps> = ({ id, title, link, type, description, onDelete }) => {
-  const [copied, setCopied] = useState(false)
-  const [showConfirmModal, setShowConfirmModal] = useState(false)
-  const twitterEmbedRef = useRef<HTMLDivElement | null>(null)
+const ContentCard: React.FC<ContentCardProps> = ({
+  id,
+  title,
+  link,
+  type,
+  description,
+  onDelete,
+}) => {
+  const [copied, setCopied] = useState(false);
+  const [showConfirmModal, setShowConfirmModal] = useState(false);
+  const twitterEmbedRef = useRef<HTMLDivElement | null>(null);
 
   const handleCopyLink = async () => {
     try {
-      await navigator.clipboard.writeText(link)
-      setCopied(true)
-      setTimeout(() => setCopied(false), 2000)
+      await navigator.clipboard.writeText(link);
+      setCopied(true);
+      setTimeout(() => setCopied(false), 2000);
     } catch (error) {
-      console.error("Failed to copy link:", error)
+      console.error("Failed to copy link:", error);
     }
-  }
+  };
 
   const handleDelete = () => {
     if (onDelete) {
-      onDelete(id)
+      onDelete(id);
     }
-    setShowConfirmModal(false)
-  }
+    setShowConfirmModal(false);
+  };
 
   useEffect(() => {
-    const currentRef = twitterEmbedRef.current
-    let isMounted = true
+    const currentRef = twitterEmbedRef.current;
+    let isMounted = true;
 
     if (type === "twitter" && (window as any).twttr?.widgets && currentRef) {
-      currentRef.innerHTML = ""
-      const tweetId = link.split("/").pop()?.split("?")[0]
+      currentRef.innerHTML = "";
+      const tweetId = link.split("/").pop()?.split("?")[0];
 
       if (tweetId) {
-        (window as any).twttr.widgets.createTweet(
-          tweetId,
-          currentRef,
-          { theme: "light", align: "center" }
-        ).then(el => {
-          if (isMounted && !el) {
-            console.error("Tweet widget failed to load for ID:", tweetId);
-            if (currentRef) {
-              currentRef.innerHTML = '<p class="text-center text-sm text-red-500 p-4">Could not load Tweet.</p>';
+        (window as any).twttr.widgets
+          .createTweet(tweetId, currentRef, { theme: "light", align: "center" })
+          .then((el) => {
+            if (isMounted && !el) {
+              console.error("Tweet widget failed to load for ID:", tweetId);
+              if (currentRef) {
+                currentRef.innerHTML =
+                  '<p class="text-center text-sm text-red-500 p-4">Could not load Tweet.</p>';
+              }
             }
-          }
-        }).catch((error: any) => console.error("Failed to create tweet", error));
+          })
+          .catch((error: any) =>
+            console.error("Failed to create tweet", error)
+          );
       }
     }
 
     return () => {
       isMounted = false;
       if (currentRef) {
-        currentRef.innerHTML = ""
+        currentRef.innerHTML = "";
       }
-    }
-  }, [type, link])
+    };
+  }, [type, link]);
 
   const renderEmbed = () => {
     if (type === "youtube") {
       try {
-        const url = new URL(link)
-        const videoId = url.searchParams.get("v") || url.pathname.split("/").pop()
+        const url = new URL(link);
+        const videoId =
+          url.searchParams.get("v") || url.pathname.split("/").pop();
         if (videoId) {
           return (
             <div className="aspect-video pt-2">
@@ -85,19 +101,15 @@ const ContentCard: React.FC<ContentCardProps> = ({ id, title, link, type, descri
                 title={`YouTube video: ${title}`}
               />
             </div>
-          )
+          );
         }
       } catch (error) {
-        console.error("Invalid YouTube URL", error)
+        console.error("Invalid YouTube URL", error);
       }
     } else if (type === "twitter") {
       return (
-        <div
-          key={link}
-          ref={twitterEmbedRef}
-          className="flex justify-center"
-        />
-      )
+        <div key={link} ref={twitterEmbedRef} className="flex justify-center" />
+      );
     }
 
     return (
@@ -120,14 +132,16 @@ const ContentCard: React.FC<ContentCardProps> = ({ id, title, link, type, descri
           </div>
         )}
       </div>
-    )
-  }
+    );
+  };
 
   return (
     <>
       <Card className="w-full h-auto sm:h-[470px] shadow-sm shadow-black/20 hover:shadow-lg hover:shadow-black/70 transition-all bg-gray-100 border-2 border-black rounded-2xl flex flex-col justify-between">
         <CardHeader className="pb-2 pt-4">
-          <CardTitle className="font-bold text-black text-lg sm:text-lg">{title}</CardTitle>
+          <CardTitle className="font-bold text-black text-lg sm:text-lg">
+            {title}
+          </CardTitle>
         </CardHeader>
 
         {/* === THE ONLY LINE THAT CHANGED === */}
@@ -166,7 +180,7 @@ const ContentCard: React.FC<ContentCardProps> = ({ id, title, link, type, descri
         onConfirm={handleDelete}
       />
     </>
-  )
-}
+  );
+};
 
-export default ContentCard
+export default ContentCard;

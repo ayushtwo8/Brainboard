@@ -7,15 +7,16 @@ interface NavbarProps {
   openSignupModal: () => void;
 }
 
-const Navbar: React.FC<NavbarProps> = ({ openSigninModal, openSignupModal }) => {
+const Navbar: React.FC<NavbarProps> = ({
+  openSigninModal,
+  openSignupModal,
+}) => {
   const navigate = useNavigate();
 
   return (
     <div className="px-6 py-6 fixed top-0 left-0 right-0 mx-45 z-50">
       <div className="max-w-7xl mx-auto">
-        <nav
-          className="bg-white/10 backdrop-blur-md rounded-full px-8 py-4 flex items-center justify-between border border-white/20"
-        >
+        <nav className="bg-white/10 backdrop-blur-md rounded-full px-8 py-4 flex items-center justify-between border border-white/20">
           <div
             onClick={() => navigate("/")}
             className="flex items-center gap-3 cursor-pointer"

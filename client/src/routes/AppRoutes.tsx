@@ -10,7 +10,7 @@ const AppRoutes = () => {
   return (
     <Routes>
       <Route path="/" element={<LandingPage />} />
-      
+
       {/* Wrapping the Dashboard route with ProtectedRoute */}
       <Route
         path="/dashboard"
@@ -20,11 +20,10 @@ const AppRoutes = () => {
           </ProtectedRoute>
         }
       />
-      
+
       <Route path="/brain/:shareLink" element={<SharedBrain />} />
 
-      {/* 🔥 Catch-all route for invalid URLs */}
-        <Route path="*" element={<NotFound />} />
+      <Route path="*" element={<NotFound />} />
     </Routes>
   );
 };

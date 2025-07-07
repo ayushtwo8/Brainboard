@@ -13,14 +13,20 @@ interface SigninModalProps {
   onSwitchToSignup: () => void;
 }
 
-export default function SigninModal({ onClose, onSwitchToSignup }: SigninModalProps) {
+export default function SigninModal({
+  onClose,
+  onSwitchToSignup,
+}: SigninModalProps) {
   const navigate = useNavigate();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
 
   const signinMutation = useMutation({
     mutationFn: async () => {
-      const res = await axiosInstance.post("/api/v1/user/login", { email, password });
+      const res = await axiosInstance.post("/api/v1/user/login", {
+        email,
+        password,
+      });
       return res.data;
     },
     onSuccess: (data) => {
@@ -44,7 +50,6 @@ export default function SigninModal({ onClose, onSwitchToSignup }: SigninModalPr
   return (
     <div className="fixed inset-0 bg-black/70 backdrop-blur-md flex justify-center items-center z-50 p-4">
       <div className="w-full max-w-md mx-4 rounded-2xl border border-white/20 bg-white/20 p-6 text-white relative shadow-2xl">
-
         {/* Close Button */}
         <button
           onClick={onClose}
@@ -65,7 +70,9 @@ export default function SigninModal({ onClose, onSwitchToSignup }: SigninModalPr
         {/* Form */}
         <form onSubmit={handleSubmit} className="space-y-4">
           <div>
-            <Label htmlFor="email" className="text-sm text-white font-inter">Email</Label>
+            <Label htmlFor="email" className="text-sm text-white font-inter">
+              Email
+            </Label>
             <Input
               id="email"
               type="email"
@@ -78,7 +85,9 @@ export default function SigninModal({ onClose, onSwitchToSignup }: SigninModalPr
           </div>
 
           <div>
-            <Label htmlFor="password" className="text-sm text-white font-inter">Password</Label>
+            <Label htmlFor="password" className="text-sm text-white font-inter">
+              Password
+            </Label>
             <Input
               id="password"
               type="password"

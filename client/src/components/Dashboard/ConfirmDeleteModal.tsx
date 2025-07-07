@@ -1,4 +1,3 @@
-
 import {
   AlertDialog,
   AlertDialogContent,
@@ -6,7 +5,6 @@ import {
   AlertDialogFooter,
   AlertDialogTitle,
   AlertDialogDescription,
-
 } from "@/components/ui/alert-dialog";
 import { Button } from "@/components/ui/button";
 
@@ -27,14 +25,23 @@ export default function ConfirmDeleteModal({
         <AlertDialogHeader>
           <AlertDialogTitle>Are you sure you want to delete?</AlertDialogTitle>
           <AlertDialogDescription>
-            This action cannot be undone. This will permanently delete your content.
+            This action cannot be undone. This will permanently delete your
+            content.
           </AlertDialogDescription>
         </AlertDialogHeader>
         <AlertDialogFooter className="flex flex-col px-8 sm:px-0 sm:flex-row gap-2 mt-4 items-center">
-          <Button variant="outline" className="w-full sm:w-auto" onClick={onCancel}>
+          <Button
+            variant="outline"
+            className="w-full sm:w-auto"
+            onClick={onCancel}
+          >
             No, Cancel
           </Button>
-          <Button variant="destructive" className="w-full bg-red-500 sm:w-auto" onClick={onConfirm}>
+          <Button
+            variant="destructive"
+            className="w-full bg-red-500 sm:w-auto"
+            onClick={onConfirm}
+          >
             Yes, Delete
           </Button>
         </AlertDialogFooter>
