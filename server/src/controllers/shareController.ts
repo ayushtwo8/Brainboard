@@ -6,6 +6,7 @@ import { ContentModel } from "../models/contentModel";
 import { UserModel } from "../models/userModel";
 
 export const shareContent = async (req: Request, res: Response) => {
+    console.log("shareContent controller");
     try{
 
         const { share } = req.body;     
@@ -47,6 +48,7 @@ export const shareContent = async (req: Request, res: Response) => {
 }
 
 export const getSharedContent = async (req: Request, res: Response) => {
+    console.log("getSharedContent controller");
     try{
         const hash = req.params.shareLink;
 

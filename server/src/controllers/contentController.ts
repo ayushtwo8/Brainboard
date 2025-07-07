@@ -4,6 +4,7 @@ import { FilterQuery } from "mongoose";
 import { ContentModel } from "../models/contentModel";
 
 export const addContent = async (req: Request, res: Response) => {
+    console.log("addContent controller");
     try{
         const { link, type, title, description, tags } = req.body;
 
@@ -27,7 +28,7 @@ export const addContent = async (req: Request, res: Response) => {
             content: newContent
         });
     }catch(error){
-        console.error("addContent controller error: ", addContent);
+        console.error("addContent controller error: ", error);
         res.status(500).json({
             message: "Internal Server Error"
         })
@@ -35,6 +36,7 @@ export const addContent = async (req: Request, res: Response) => {
 }
 
 export const getUserContent = async (req: Request, res: Response) => {
+    console.log("getUserContent controller");
     try{
         const userId = req.userId;
         const searchQuery = req.query.search as string;
@@ -61,6 +63,7 @@ export const getUserContent = async (req: Request, res: Response) => {
 }
 
 export const deleteContent = async (req: Request, res: Response) => {
+    console.log("deleteContent controller");
     try{
         const { id: contentId } = req.params;
         const userId = req.userId;

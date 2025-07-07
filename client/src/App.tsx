@@ -1,45 +1,20 @@
-// client/src/App.tsx
-
-import { Routes, Route } from "react-router-dom";
-import Landing from "./pages/Landing";
-import Signup from "./pages/Signup";
-import Login from "./pages/Login";
-import NotFound from "./pages/NotFound";
-import Layout from "./components/MainLayout";
-import Dashboard from "./pages/Dashboard";
-import Videos from "./pages/Videos";
-import Tweets from "./pages/Tweets";
+import { BrowserRouter } from "react-router-dom";
 import { Toaster } from "react-hot-toast";
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 
-// --- IMPORT THE NEW COMPONENT ---
-import ProtectedRoute from "./components/ProtectedRoute";
+import AppRoutes from "./routes/AppRoutes";
 
-const App = () => {
+const queryClient = new QueryClient();
+
+function App() {
   return (
-    <>
-      <Toaster position="top-right" />
-      <Routes>
-        {/* === Public Routes === */}
-        <Route path="/" element={<Landing />} />
-        <Route path="/signup" element={<Signup />} />
-        <Route path="/login" element={<Login />} />
-        
-        {/* === Protected Routes Wrapper === */}
-        {/* All routes inside here are now protected */}
-        <Route element={<ProtectedRoute />}>
-          <Route path="/user" element={<Layout />}>
-            <Route index element={<Dashboard />} />
-            <Route path="videos" element={<Videos />} />
-            <Route path="tweets" element={<Tweets />} />
-          </Route>
-          {/* You could add more top-level protected routes here if needed */}
-        </Route>
-        
-        {/* Catch-all route should be last */}
-        <Route path="*" element={<NotFound />} />
-      </Routes>
-    </>
+    <QueryClientProvider client={queryClient}>
+      <BrowserRouter>
+        <Toaster position="top-center" />
+        <AppRoutes />
+      </BrowserRouter>    
+    </QueryClientProvider>
   );
-};
+}
 
 export default App;
